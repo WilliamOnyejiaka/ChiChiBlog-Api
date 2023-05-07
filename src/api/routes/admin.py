@@ -21,7 +21,7 @@ def login():
             'message':"email and password are needed"
         }),400
 
-    current_admin = Admin.get_admin_by_email(email)
+    current_admin = Admin.get_admin_by_email(email.strip())
 
     if current_admin:
         valid_password = check_password_hash(current_admin['password'],password)
