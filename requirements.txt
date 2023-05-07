@@ -13,6 +13,7 @@ Jinja2
 MarkupSafe
 pycodestyle
 PyJWT
+gunicorn
 pymongo
 python-dotenv
 six
