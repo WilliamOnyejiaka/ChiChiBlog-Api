@@ -26,10 +26,21 @@ class Article:
     def get_article(query_values:Dict,needed_attributes=['_id', 'title', 'body', 'image_url', 'created_at', 'updated_at']) -> Dict:
         db_response = articles.find_one(query_values)
         return Serializer(needed_attributes).serialize(db_response) if db_response else {}
+
+    @staticmethod
+    def get_all_articles(needed_attributes=['_id', 'title', 'body', 'image_url', 'created_at', 'updated_at']) -> List:
+        db_response = articles.find()
+        # data = []
+        
+        return Serializer(needed_attributes).dump_find(db_response) if db_response else {}
     
     @staticmethod
     def get_article_by_id(id: str,admin_id:str, needed_attributes=['_id', 'title', 'body', 'image_url', 'created_at', 'updated_at']) -> Dict:
         return Article.get_article({'_id': ObjectId(id), 'admin_id': admin_id}, needed_attributes)
+    
+    @staticmethod
+    def get_public_article_by_id(id: str, needed_attributes=['_id', 'title', 'body', 'image_url', 'created_at', 'updated_at']) -> Dict:
+        return Article.get_article({'_id': ObjectId(id)}, needed_attributes)
         
     @staticmethod
     def get_article_by_title(title: str, needed_attributes=['_id', 'title', 'body', 'image_url', 'created_at', 'updated_at']) -> Dict:
@@ -61,13 +72,39 @@ class Article:
         return Serializer(needed_attributes).dump(db_response)
     
     @staticmethod
+    def article_search(search_string: str, needed_attributes=['_id', 'title', 'body', 'image_url', 'created_at', 'updated_at']) -> List:
+        db_response = list(articles.find({'$or': [{
+            'body': {
+                '$regex': search_string,
+                "$options": 'i'
+            }},
+            {
+            'title': {
+                '$regex': search_string,
+                "$options": 'i'
+            }}
+        ]}).sort('_id'))
+
+        return Serializer(needed_attributes).dump(db_response)
+    
+    @staticmethod
     def admin_title_search(admin_id:str, search_string:str, needed_attributes=['_id', 'title', 'body', 'image_url', 'created_at', 'updated_at']) -> List:
         db_response = list(articles.find({'admin_id': admin_id,'title': {'$regex': search_string,"$options": 'i'}}).sort('_id'))
+        return Serializer(needed_attributes).dump(db_response)
+    
+    @staticmethod
+    def title_search(search_string:str, needed_attributes=['_id', 'title', 'body', 'image_url', 'created_at', 'updated_at']) -> List:
+        db_response = list(articles.find({'title': {'$regex': search_string,"$options": 'i'}}).sort('_id'))
         return Serializer(needed_attributes).dump(db_response)
 
     @staticmethod
     def admin_body_search(admin_id:str, search_string:str, needed_attributes=['_id', 'title', 'body', 'image_url', 'created_at', 'updated_at']) -> List:
         db_response = list(articles.find({'admin_id': admin_id,'body': {'$regex': search_string,"$options": 'i'}}).sort('_id'))
+        return Serializer(needed_attributes).dump(db_response)
+
+    @staticmethod
+    def body_search(search_string:str, needed_attributes=['_id', 'title', 'body', 'image_url', 'created_at', 'updated_at']) -> List:
+        db_response = list(articles.find({'body': {'$regex': search_string,"$options": 'i'}}).sort('_id'))
         return Serializer(needed_attributes).dump(db_response)
     
     @staticmethod

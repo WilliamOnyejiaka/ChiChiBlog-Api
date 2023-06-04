@@ -24,3 +24,13 @@ class Serializer:
             result.append(data)
         return result
         
+    def dump_find(self,documents) -> List:
+        data = []
+        for document in documents:
+            for attr in self.needed_attributes:
+                if attr == '_id':
+                    document[attr] = str(document[attr])
+                else:
+                    document[attr] = document[attr]
+            data.append(document)
+        return data

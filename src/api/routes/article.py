@@ -119,7 +119,7 @@ def article_pagination():
 
     try:
         page = int(request.args.get('page', 1))
-        limit = int(request.args.get('limit', 1))
+        limit = int(request.args.get('limit', 10))
     except Exception:
         return jsonify({'error': True, 'message': "page and limit must be an integer"}), 400
 
