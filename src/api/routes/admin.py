@@ -268,6 +268,27 @@ def update_admin_name():
         'message': "something went wrong"
     }),500
 
+
+@admin.get('/token/access-token')
+@admin(refresh=True)
+def admin_token():
+    admin_id = get_jwt_identity()
+    admin = Admin.get_admin_by_id(admin_id)
+
+    if admin:
+        token = create_access_token(identity=admin_id)
+
+        return jsonify({
+            'error': False,
+            'admin_token': token
+        }), 201
+
+    return jsonify({
+        'error': True,
+        'message': "admin does not exists"
+    }), 404
+
+
 @admin.get("/test")
 @jwt_required()
 def test():
