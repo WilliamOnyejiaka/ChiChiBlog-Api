@@ -270,7 +270,7 @@ def update_admin_name():
 
 
 @admin.get('/token/access-token')
-@admin(refresh=True)
+@jwt_required(refresh=True)
 def admin_token():
     admin_id = get_jwt_identity()
     admin = Admin.get_admin_by_id(admin_id)
